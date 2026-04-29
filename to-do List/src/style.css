@@ -1,0 +1,283 @@
+:root {
+  --color-page: #10151d;
+  --color-card: #18212b;
+  --color-card-soft: #212c38;
+  --color-border: #334253;
+  --color-text: #f6f8fb;
+  --color-muted: #9aa8b8;
+  --color-accent: #32d3a2;
+  --color-accent-dark: #15956f;
+  --color-danger: #ff6b6b;
+  --color-danger-dark: #d84545;
+  --shadow-card: 0 24px 70px rgba(0, 0, 0, 0.36);
+
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: var(--color-text);
+  background: var(--color-page);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.todo {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+}
+
+.todo__card {
+  width: min(100%, 560px);
+  padding: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-card);
+  box-shadow: var(--shadow-card);
+}
+
+.todo__header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.todo__title {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 2.25rem;
+  line-height: 1.15;
+}
+
+.todo__summary {
+  margin: 20px 0 0;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.todo__form {
+  margin-bottom: 18px;
+}
+
+.todo__label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.todo__controls {
+  display: flex;
+  gap: 10px;
+}
+
+.todo__input {
+  min-width: 0;
+  flex: 1;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text);
+  background: #111923;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.todo__input::placeholder {
+  color: #718093;
+}
+
+.todo__input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(50, 211, 162, 0.18);
+}
+
+.todo__button,
+.todo__filter,
+.todo__delete {
+  min-height: 40px;
+  border: 0;
+  border-radius: 6px;
+  font-weight: 700;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.todo__button {
+  min-width: 92px;
+  padding: 0 18px;
+  color: #082319;
+  background: var(--color-accent);
+}
+
+.todo__button:hover {
+  background: #5fe1ba;
+}
+
+.todo__button:active,
+.todo__filter:active,
+.todo__delete:active {
+  transform: translateY(1px);
+}
+
+.todo__filters {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.todo__filter {
+  padding: 10px 12px;
+  color: var(--color-muted);
+  background: var(--color-card-soft);
+}
+
+.todo__filter:hover {
+  color: var(--color-text);
+  background: #2a3644;
+}
+
+.todo__filter--active {
+  color: #082319;
+  background: var(--color-accent);
+}
+
+.todo__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.todo__empty {
+  margin: 0;
+  padding: 24px 16px;
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  color: var(--color-muted);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.todo__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 58px;
+  padding: 10px 10px 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-card-soft);
+}
+
+.todo__status {
+  min-width: 0;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+}
+
+.todo__checkbox {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  accent-color: var(--color-accent);
+}
+
+.todo__text {
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  line-height: 1.35;
+}
+
+.todo__item--completed .todo__text,
+.todo__text--completed {
+  color: var(--color-muted);
+  text-decoration: line-through;
+}
+
+.todo__delete {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  color: #fff;
+  background: var(--color-danger-dark);
+}
+
+.todo__delete:hover {
+  background: var(--color-danger);
+}
+
+@media (max-width: 520px) {
+  .todo {
+    align-items: start;
+    padding-top: 18px;
+  }
+
+  .todo__card {
+    padding: 22px 16px;
+  }
+
+  .todo__title {
+    font-size: 1.9rem;
+  }
+
+  .todo__controls {
+    flex-direction: column;
+  }
+
+  .todo__button {
+    width: 100%;
+  }
+
+  .todo__filters {
+    grid-template-columns: 1fr;
+  }
+
+  .todo__item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .todo__delete {
+    width: 100%;
+  }
+}
