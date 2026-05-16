@@ -55,6 +55,12 @@ src/
 
 ## Install
 
+From the repository root, open the Lab 4 folder first:
+
+```bash
+cd ЛБ4
+```
+
 ```bash
 npm install
 ```
