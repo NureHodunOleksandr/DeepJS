@@ -15,7 +15,11 @@ function createRegistrationId() {
 }
 
 function normalizeEmail(email) {
-  return email.trim().toLowerCase()
+  return String(email ?? '').trim().toLowerCase()
+}
+
+function isActiveRegistration(registration) {
+  return !['failed', 'rolled-back', 'removed'].includes(registration.status)
 }
 
 function simulateRegistrationRequest({ simulateError = false } = {}) {
@@ -37,7 +41,9 @@ export function useRegistrations() {
       const selectedEventId = String(unref(eventId))
 
       return registrations.value
-        .filter((registration) => registration.eventId === selectedEventId)
+        .filter((registration) => {
+          return registration.eventId === selectedEventId && isActiveRegistration(registration)
+        })
         .sort((firstRegistration, secondRegistration) => {
           return new Date(secondRegistration.createdAt) - new Date(firstRegistration.createdAt)
         })
@@ -45,14 +51,25 @@ export function useRegistrations() {
   }
 
   function getRegistrationCountByEventId(eventId) {
-    return registrations.value.filter((registration) => registration.eventId === String(eventId)).length
+    return registrations.value.filter((registration) => {
+      return registration.eventId === String(eventId) && isActiveRegistration(registration)
+    }).length
   }
 
   function isAlreadyRegistered(eventId, email) {
+    const selectedEventId = String(eventId)
     const normalizedEmail = normalizeEmail(email)
 
+    if (!normalizedEmail) {
+      return false
+    }
+
     return registrations.value.some((registration) => {
-      return registration.eventId === String(eventId) && registration.email === normalizedEmail
+      return (
+        registration.eventId === selectedEventId &&
+        normalizeEmail(registration.email) === normalizedEmail &&
+        isActiveRegistration(registration)
+      )
     })
   }
 
@@ -64,7 +81,7 @@ export function useRegistrations() {
     successMessage.value = ''
 
     if (isAlreadyRegistered(selectedEventId, normalizedEmail)) {
-      errorMessage.value = 'This email is already registered for the selected event.'
+      errorMessage.value = 'This email is already registered for this event.'
       throw new Error(errorMessage.value)
     }
 
@@ -113,6 +130,7 @@ export function useRegistrations() {
     getRegistrationsByEventId,
     getRegistrationCountByEventId,
     isAlreadyRegistered,
+    normalizeEmail,
     registerUser,
   }
 }

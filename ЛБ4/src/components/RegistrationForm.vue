@@ -9,6 +9,7 @@
           autocomplete="name"
           :aria-invalid="Boolean(errors.fullName)"
           placeholder="Oleksandr Hodun"
+          @blur="touched.fullName = true"
         />
         <small v-if="errors.fullName">{{ errors.fullName }}</small>
       </label>
@@ -21,6 +22,7 @@
           autocomplete="email"
           :aria-invalid="Boolean(errors.email)"
           placeholder="student@example.com"
+          @blur="touched.email = true"
         />
         <small v-if="errors.email">{{ errors.email }}</small>
       </label>
@@ -54,7 +56,7 @@
       This event is full, so new registrations are closed.
     </div>
 
-    <button class="button primary submit-button" type="submit" :disabled="busy || isFull">
+    <button class="button primary submit-button" type="submit" :disabled="busy || !isFormValid">
       <span v-if="busy">Sending...</span>
       <span v-else>Submit registration</span>
     </button>
@@ -62,7 +64,7 @@
 </template>
 
 <script setup>
-import { computed, reactive } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useRegistrations } from '../composables/useRegistrations'
 
 const props = defineProps({
@@ -91,34 +93,62 @@ const form = reactive({
   simulateError: false,
 })
 
-const errors = reactive({
-  fullName: '',
-  email: '',
+const touched = reactive({
+  fullName: false,
+  email: false,
 })
 
+const wasSubmitted = ref(false)
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const isFull = computed(() => props.registeredCount >= props.event.capacity)
 
-function validateForm() {
-  errors.fullName = ''
-  errors.email = ''
-
-  if (!form.fullName) {
-    errors.fullName = 'Name is required.'
+const fullNameError = computed(() => {
+  if (!wasSubmitted.value && !touched.fullName) {
+    return ''
   }
 
-  if (!form.email) {
-    errors.email = 'Email is required.'
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-    errors.email = 'Enter a valid email address.'
-  } else if (isAlreadyRegistered(props.event.id, form.email)) {
-    errors.email = 'This email is already registered for this event.'
+  return form.fullName ? '' : 'Name is required.'
+})
+
+const emailError = computed(() => {
+  const email = form.email.trim()
+  const canShowRequiredError = wasSubmitted.value || touched.email
+
+  if (!email) {
+    return canShowRequiredError ? 'Email is required.' : ''
   }
 
-  return !errors.fullName && !errors.email
-}
+  if (!emailPattern.test(email)) {
+    return canShowRequiredError ? 'Enter a valid email address.' : ''
+  }
+
+  if (isAlreadyRegistered(props.event.id, email)) {
+    return 'This email is already registered for this event.'
+  }
+
+  return ''
+})
+
+const errors = computed(() => ({
+  fullName: fullNameError.value,
+  email: emailError.value,
+}))
+
+const isFormValid = computed(() => {
+  const email = form.email.trim()
+
+  return (
+    !isFull.value &&
+    Boolean(form.fullName) &&
+    emailPattern.test(email) &&
+    !isAlreadyRegistered(props.event.id, email)
+  )
+})
 
 function handleSubmit() {
-  if (!validateForm() || isFull.value) {
+  wasSubmitted.value = true
+
+  if (!isFormValid.value) {
     return
   }
 
